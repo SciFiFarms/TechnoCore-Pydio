@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/SciFiFarms/dogfish.git
+	branch = master
+	commit = fd27635bd5fb26f0451347de2d358a1d05a9cfb2
+	parent = 2fe591ac411b63521a5b064849d7b19d92ebd94d
+	method = merge
+	cmdver = 0.4.0
