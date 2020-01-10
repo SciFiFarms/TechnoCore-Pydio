@@ -5,7 +5,8 @@ networks:
   pydio-private:
 
 volumes:
-  pydio:
+  pydio-config:
+  pydio-data:
   pydio-db:
 
 secrets:
@@ -27,7 +28,7 @@ services:
       labels:
         - traefik.frontend.rule=$PYDIO_ROUTING_LABEL
         - traefik.frontend.priority=$PYDIO_ROUTING_LABEL_PRIORITY
-        - traefik.port=SET_ME_PLEASE
+        - traefik.port=80
         - ${TRAEFIK_BASIC_AUTH}
         - traefik.enable=true
         - traefik.tags=ingress 
@@ -54,7 +55,11 @@ services:
       # Sometimes you have to pass in ${DOMAIN} to enable the correct link paths to be generated.
       # Othertimes you can use http:// or https:// for the website. Weird trick.
       - ADMIN_USER=${ADMIN_USER}
-    image: ${image_provider:-scififarms}/technocore-pydio:${TAG:-latest}
+      - TZ=${TZ}
+    # Might not be needed?
+    #hostname: pydio
+    image: linuxserver/pydio:latest
+    #image: ${image_provider:-scififarms}/technocore-pydio:${TAG:-latest}
     logging:
       driver: "${LOGGING_DRIVER}"
       options:
@@ -66,8 +71,8 @@ services:
       - source: pydio_pydio_db_password
         target: pydio_db_password
     volumes:
-      # Likely need to change this
-      - pydio:/var/lib/pydio
+      - pydio-config:/config
+      - pydio-data:/data
       - ${DEV_MOUNT_PYDIO_SHELL_MIGRATIONS:-$EMPTY_MOUNT}
 
   pydio_db:
@@ -77,8 +82,14 @@ services:
       mode: global
       restart_policy:
         condition: any
-    #environment:
-    image: ${image_provider:-scififarms}/technocore-pydio-db:${TAG:-latest}
+    environment:
+      - MYSQL_DATABASE=pydio
+      - MYSQL_USER=pydio
+      - MYSQL_ROOT_PASSWORD={{"{{DOCKER-SECRET:admin_password}}"}}
+      - MYSQL_PASSWORD={{"{{DOCKER-SECRET:pydio_password}}"}}
+    image: ${image_provider:-scififarms}/technocore-nextcloud-db:${TAG:-latest}
+    #image: mariadb:latest
+    #image: ${image_provider:-scififarms}/technocore-pydio-db:${TAG:-latest}
     logging:
       driver: "${LOGGING_DRIVER}"
       options:
@@ -92,4 +103,4 @@ services:
         target: pydio_password
     volumes:
       # Likely need to change this
-      - pydio-db:/var/lib/pydio
+      - pydio-db:/var/lib/mysql
