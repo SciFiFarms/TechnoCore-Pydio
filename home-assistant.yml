@@ -1,0 +1,6 @@
+version: "3.5"
+
+services:
+  home_assistant:
+    environment:
+      - SIDEBAR_PYDIO=        Pydio|pydio.$DOMAIN|mdi:file-chart-outline

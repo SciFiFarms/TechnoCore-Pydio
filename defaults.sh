@@ -24,3 +24,4 @@ set_service_flag $service_name
 #fi
 
 #generate_mount dev shell-migrations /usr/share/dogfish/shell-migrations
+set_optional_service home-assistant

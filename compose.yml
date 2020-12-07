@@ -13,8 +13,14 @@ secrets:
   pydio_admin_password:
     name: ${STACK_NAME:-technocore}_pydio_admin_password
     external: true
-  pydio_pydio-db_password:
-    name: ${STACK_NAME:-technocore}_pydio_pydio-db_password
+  pydio_pydio_db_password:
+    name: ${STACK_NAME:-technocore}_pydio_pydio_db_password
+    external: true
+  pydio_db_pydio_password:
+    name: ${STACK_NAME:-technocore}_pydio_db_pydio_password
+    external: true
+  pydio_db_admin_password:
+    name: ${STACK_NAME:-technocore}_pydio_db_admin_password
     external: true
 
 services:
@@ -56,9 +62,13 @@ services:
       # Othertimes you can use http:// or https:// for the website. Weird trick.
       - ADMIN_USER=${ADMIN_USER}
       - TZ=${TZ}
+      - CELLS_NO_TLS=1
+      - CELLS_BIND=pydio.${DOMAIN}:80
+      - CELLS_EXTERNAL=https://pydio.${DOMAIN}
     # Might not be needed?
-    #hostname: pydio
-    image: linuxserver/pydio:latest
+    hostname: pydio.${DOMAIN}
+    image: pydio/cells:2.0.2
+    #image: linuxserver/pydio:latest
     #image: ${image_provider:-scififarms}/technocore-pydio:${TAG:-latest}
     logging:
       driver: "${LOGGING_DRIVER}"
